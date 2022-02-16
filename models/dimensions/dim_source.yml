@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: staging
+    database: pc_fivetran_db
+    schema: staging
+    tables:
+      - name: stg_time
+      - name: stg_sales_territory
+      - name: stg_product
+      - name: stg_product_subcategory
+      - name: stg_product_category
+      - name: stg_geography
+      - name: stg_customer
+      - name: stg_sales_detail
+
+      
+

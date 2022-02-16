@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: dim_customer
+    columns: 
+      - name: customer_key
+        tests:
+          - unique
+          - not_null
+    columns:
+      - name: geography_key
+        tests:
+          - relationships:
+              to: ref('dim_geography')
+              field: geography_key
+  
