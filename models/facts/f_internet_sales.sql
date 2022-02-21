@@ -11,6 +11,19 @@ Sales_Order_Line_Number,
 sc.Customer_Key,
 sp.Product_Key,
 st.Date_Key as order_date_key,
+  CASE
+            WHEN sc.Yearly_Income < 40000 THEN 'Low'
+            WHEN sc.Yearly_Income > 60000 THEN 'High'
+            ELSE 'Moderate'
+        END AS IncomeGroup,
+  CASE
+            WHEN Month(GetDate()) < Month(sc.Birth_Date)
+                THEN DateDiff(yy,sc.Birth_Date,GetDate()) - 1
+            WHEN Month(GetDate()) = Month(sc.Birth_Date)
+            AND Day(GetDate()) < Day(sc.Birth_Date)
+                THEN DateDiff(yy,sc.Birth_Date,GetDate()) - 1
+            ELSE DateDiff(yy,sc.Birth_Date,GetDate())
+        END AS Age,
 Order_Quantity,
 Unit_Price,
 Product_Std_Cost,

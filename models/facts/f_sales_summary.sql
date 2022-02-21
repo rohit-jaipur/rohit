@@ -1,3 +1,7 @@
+{{ config(
+    materialized='view'
+    )
+}}
 
 with internet_sale as (select * from {{ ref('f_internet_sales')}}),
 
@@ -21,19 +25,8 @@ SELECT
         ,Coalesce(p.Model_Name, p.Product_Name) AS Model
         ,c.Customer_Key
         --,s.Sales_Territory_Group AS Region
-        ,CASE
-            WHEN Month(GetDate()) < Month(c.Birth_Date)
-                THEN DateDiff(yy,c.Birth_Date,GetDate()) - 1
-            WHEN Month(GetDate()) = Month(c.Birth_Date)
-            AND Day(GetDate()) < Day(c.Birth_Date)
-                THEN DateDiff(yy,c.Birth_Date,GetDate()) - 1
-            ELSE DateDiff(yy,c.Birth_Date,GetDate())
-        END AS Age 
-        ,CASE
-            WHEN c.Yearly_Income < 40000 THEN 'Low'
-            WHEN c.Yearly_Income > 60000 THEN 'High'
-            ELSE 'Moderate'
-        END AS IncomeGroup
+        ,f.Age 
+        ,f.IncomeGroup
         ,d.Calendar_Year
         ,d.month_name 
         ,f.Sales_Order_Number AS OrderNumber
@@ -45,10 +38,8 @@ from internet_sale f
         ON f.Order_Date_Key = d.Date_Key
         INNER JOIN product p
         ON f.Product_Key = p.Product_Key
-             INNER JOIN product_sub_category psc
-        ON p.product_sub_category_key = psc.prod_sub_cat_key
-            INNER JOIN product_category pc
-        ON psc.prod_Cat_Key = pc.prod_cat_Key
+             INNER JOIN product_category pc
+        ON p.prod_Cat_name = pc.prod_cat_name
             INNER JOIN customer c
         ON f.customer_Key = c.customer_Key
             INNER JOIN geography g
